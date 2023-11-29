@@ -18,7 +18,7 @@ jobs:
       - run: npm ci
       - run: npm run build --if-present
 
-        - name: deploy file
+      - name: deploy file
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
             username: 'puyosim'
