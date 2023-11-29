@@ -25,7 +25,7 @@ let routeCode;
 
 const loadRouteCode = async () => {
   const start = Date.now();
-  const response = await fetch("/data/route_1-9r.txt.br");
+  const response = await fetch("../data/route_1-9r.txt.br");
   const arrayBuffer = await response.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
   const uint8Array = decompress(buffer);

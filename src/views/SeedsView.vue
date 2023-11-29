@@ -424,16 +424,16 @@ export default {
 
     imgUrl: function (imgNum) {
       var puyoImg = [
-        "/img/red.webp",
-        "/img/blue.webp",
-        "/img/yellow.webp",
-        "/img/green.webp",
-        "/img/purple.webp",
-        "/img/heart.webp",
-        "/img/prism.webp",
+        "../img/red.webp",
+        "../img/blue.webp",
+        "../img/yellow.webp",
+        "../img/green.webp",
+        "../img/purple.webp",
+        "../img/heart.webp",
+        "../img/prism.webp",
       ];
 
-      if (imgNum == -1) return "/img/blank_r.gif";
+      if (imgNum == -1) return "../img/blank_r.gif";
 
       return puyoImg[imgNum];
     },
