@@ -18,18 +18,18 @@ const nonPuyos = [puyoColor.heart, puyoColor.prism, puyoColor.ojama];
 /**
  * 連結されている色ぷよを探し、その色ぷよと周囲の色ぷよ以外を消去する
  *
- * @param {number} eraseLinkNum 消去対象の最小連結数
+ * @param {number} erasePuyoLength 消去対象の最小連結数
  *
  * @returns {DeleteCount}
  */
-const deletePuyos = function (field, eraseLinkNum) {
+const deletePuyos = function (field, erasePuyoLength) {
   const c = puyoColor;
   let chained = false;
   let deleteCount = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   let deleteAreaCount = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   // 連結箇所を探す
-  field.searchLinkPuyos(eraseLinkNum, (points, color) => {
+  field.searchLinkPuyos(erasePuyoLength, (points, color) => {
     chained = true;
     deleteCount[color] += points.length;
     deleteAreaCount[color]++;
@@ -58,13 +58,14 @@ const deletePuyos = function (field, eraseLinkNum) {
  * 連結されている色ぷよを探し、その色ぷよと周囲の色ぷよ以外を消去する
  * このメソッドはネクストぷよが降る最終連鎖のときに呼び出される
  *
- * @param {number} eraseLinkNum 消去対象の最小連結数
+ * @param {number} erasePuyoLength 消去対象の最小連結数
  *
  * @returns {DeleteCount}
  */
 const lastDeletePuyos = function (
   field,
-  eraseLinkNum,
+  erasePuyoLength,
+  eraseAssumedPuyoLength,
   eraseBlankNum,
   atackColor
 ) {
@@ -76,12 +77,16 @@ const lastDeletePuyos = function (
   /**
    * 連結箇所を探す
    *
-   * <>atackColor && eraseLinkNum - 1
-   * 攻撃色でなおかつ消える数より一つ小さい連結を落ち込ん要因として探している
+   * <>eraseAssumedPuyoLength
+   * 攻撃色でなおかつ消える数よりも小さい連結を落ちコン要因として探している
    * さらにそれに隣接している空欄の数も調べる
    */
-  field.searchLinkPuyos(eraseLinkNum - 1, (points, color) => {
-    if (color === atackColor && points.length === eraseLinkNum - 1) {
+  field.searchLinkPuyos(eraseAssumedPuyoLength, (points, color) => {
+    if (
+      color === atackColor &&
+      eraseAssumedPuyoLength >= points.length &&
+      points.length < erasePuyoLength
+    ) {
       let blankNum = 0;
       field.targetsAround(points, (x, y) => {
         if (field.isBlank(x, y)) {
@@ -93,7 +98,7 @@ const lastDeletePuyos = function (
         deleteCount[color] += points.length;
         deleteAreaCount[color]++;
       }
-    } else if (points.length >= eraseLinkNum) {
+    } else if (points.length >= erasePuyoLength) {
       chained = true;
       deleteCount[color] += points.length;
       deleteAreaCount[color]++;
@@ -122,7 +127,8 @@ const chainForRouteDelete = function (
   nextColor,
   atackColor,
   routeCode,
-  eraseLinkNum,
+  erasePuyoLength,
+  eraseAssumedPuyoLength,
   eraseBlankNum,
   doujiCorrection,
   chainCorrection
@@ -146,10 +152,16 @@ const chainForRouteDelete = function (
 
     let ret;
     //連鎖が発生しない場合、ネクストぷよを落下させる
-    if (!field.isChain(eraseLinkNum)) {
+    if (!field.isChain(erasePuyoLength)) {
       field.dropFloatingNext();
 
-      ret = lastDeletePuyos(field, eraseLinkNum, eraseBlankNum, atackColor);
+      ret = lastDeletePuyos(
+        field,
+        erasePuyoLength,
+        eraseAssumedPuyoLength,
+        eraseBlankNum,
+        atackColor
+      );
 
       /**
        * 確定連鎖が存在しない場合は落ちコン発生率が落ちるので除外する
@@ -162,7 +174,7 @@ const chainForRouteDelete = function (
        */
       // chained = false;
     } else {
-      ret = deletePuyos(field, eraseLinkNum);
+      ret = deletePuyos(field, erasePuyoLength);
       chained = ret.chained;
     }
 
@@ -172,7 +184,7 @@ const chainForRouteDelete = function (
       chainNum,
       doujiCorrection,
       chainCorrection,
-      eraseLinkNum
+      erasePuyoLength
     );
     for (const color in totalColorMag) {
       totalColorMag[color] += colorMag[color];
@@ -196,7 +208,8 @@ const chainForRoutePaint = function (
   nextColor,
   atackColor,
   routeCode,
-  eraseLinkNum,
+  erasePuyoLength,
+  eraseAssumedPuyoLength,
   eraseBlankNum,
   doujiCorrection,
   chainCorrection
@@ -222,10 +235,16 @@ const chainForRoutePaint = function (
 
     let ret;
     //連鎖が発生しない場合、ネクストぷよを落下させる
-    if (!field.isChain(eraseLinkNum)) {
+    if (!field.isChain(erasePuyoLength)) {
       field.dropFloatingNext();
 
-      ret = lastDeletePuyos(field, eraseLinkNum, eraseBlankNum, atackColor);
+      ret = lastDeletePuyos(
+        field,
+        erasePuyoLength,
+        eraseAssumedPuyoLength,
+        eraseBlankNum,
+        atackColor
+      );
 
       /**
        * 確定連鎖が存在しない場合は落ちコン発生率が落ちるので除外する
@@ -238,7 +257,7 @@ const chainForRoutePaint = function (
        */
       // chained = false;
     } else {
-      ret = deletePuyos(field, eraseLinkNum);
+      ret = deletePuyos(field, erasePuyoLength);
       chained = ret.chained;
     }
 
@@ -248,7 +267,7 @@ const chainForRoutePaint = function (
       chainNum,
       doujiCorrection,
       chainCorrection,
-      eraseLinkNum
+      erasePuyoLength
     );
     for (const color in totalColorMag) {
       totalColorMag[color] += colorMag[color];
@@ -277,7 +296,7 @@ const colorMagCalc = function (
   chainNum,
   doujiCorrection,
   chainCorrection,
-  eraseLinkNum
+  erasePuyoLength
 ) {
   const deletePuyoNum = doujiTotal(deleteCount);
   let colorMag = [0, 0, 0, 0, 0]; // colorMag[puyoColor] = 倍率;
@@ -286,7 +305,7 @@ const colorMagCalc = function (
     chainNum,
     doujiCorrection,
     chainCorrection,
-    eraseLinkNum
+    erasePuyoLength
   );
 
   for (const color in colorMag) {
@@ -361,7 +380,7 @@ const outputRankingRoute = () => {
  * @param {puyoColor[][]} map ぷよのマップ
  * @param {puyoColor} nextColor ネクストの色
  * @param {puyoColor} atackColor 攻撃色
- * @param {number} eraseLinkNum ぷよが消える連結数
+ * @param {number} erasePuyoLength ぷよが消える連結数
  * @param {number} eraseBlankNum 落ちコンに求める空欄の数
  * @param {number} doujiCorrection 同時消し係数
  * @param {number} chainCorrection 連鎖係数
@@ -374,7 +393,8 @@ const analysisForRouteDelete = function (
   map,
   nextColor,
   atackColor,
-  eraseLinkNum,
+  erasePuyoLength,
+  eraseAssumedPuyoLength,
   eraseBlankNum,
   doujiCorrection,
   chainCorrection
@@ -391,7 +411,8 @@ const analysisForRouteDelete = function (
       nextColor,
       atackColor,
       route,
-      eraseLinkNum,
+      erasePuyoLength,
+      eraseAssumedPuyoLength,
       eraseBlankNum,
       doujiCorrection,
       chainCorrection
@@ -412,7 +433,8 @@ const analysisForRoutePaint = function (
   map,
   nextColor,
   atackColor,
-  eraseLinkNum,
+  erasePuyoLength,
+  eraseAssumedPuyoLength,
   eraseBlankNum,
   doujiCorrection,
   chainCorrection
@@ -430,7 +452,8 @@ const analysisForRoutePaint = function (
       nextColor,
       atackColor,
       route,
-      eraseLinkNum,
+      erasePuyoLength,
+      eraseAssumedPuyoLength,
       eraseBlankNum,
       doujiCorrection,
       chainCorrection
@@ -449,7 +472,7 @@ const getLastMap = function (
   map,
   nextColor,
   routeCode,
-  eraseLinkNum,
+  erasePuyoLength,
   paintColor
 ) {
   let field = PuyoqueStd.createField(fieldWidth, fieldHeight);
@@ -471,11 +494,11 @@ const getLastMap = function (
 
     let ret;
     //連鎖が発生しない場合、ネクストぷよを落下させる
-    if (!field.isChain(eraseLinkNum)) {
+    if (!field.isChain(erasePuyoLength)) {
       field.dropFloatingNext();
       break;
     } else {
-      ret = deletePuyos(field, eraseLinkNum);
+      ret = deletePuyos(field, erasePuyoLength);
       chained = ret.chained;
     }
   }

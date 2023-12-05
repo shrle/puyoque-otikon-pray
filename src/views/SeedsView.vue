@@ -81,10 +81,21 @@
 
       <div class="mb-2">
         <label>
+          落ちコンすると仮定するぷよの連結数
+          <select v-model="eraseAssumedPuyoLength">
+            <option v-for="(item, index) in 3" :value="index + 1" :key="index">
+              {{ item }}
+            </option>
+          </select>
+        </label>
+      </div>
+
+      <div class="mb-2">
+        <label>
           なぞり消し数
           <select v-model="selectRouteNum">
-            <option v-for="n in selectRouteLengthMax" :value="n" :key="n">
-              {{ n + 1 }}
+            <option v-for="n in selectRouteLengthMax" :value="n - 1" :key="n">
+              {{ n }}
             </option>
           </select>
         </label>
@@ -271,7 +282,7 @@ export default {
       fieldHeight: 6,
       displayMap: [],
       selectRouteNum: 4,
-      selectRouteLengthMax: 9,
+      selectRouteLengthMax: 12,
       selectRouteBehavior: "",
       history: [],
       historyIndex: 0,
@@ -282,6 +293,7 @@ export default {
       colorMag: [0, 0, 0, 0, 0, 0],
       chainNum: 0,
       erasePuyoLength: 3,
+      eraseAssumedPuyoLength: 3, // 落ちコンするであろうと仮定するぷよの個数
       eraseBlankNum: 3,
       selectMapIndex: 0,
       replay: [],
@@ -342,6 +354,8 @@ export default {
       this.init(id);
     },
     analysisStart: function () {
+      console.log("selectRouteNum: " + this.selectRouteNum);
+
       console.log("analysis start!");
       const routeCodeLength = routeLength[this.selectRouteNum];
       const map = this.maps[this.selectMapIndex];
@@ -353,6 +367,7 @@ export default {
         this.nextColor,
         this.atackColor,
         this.erasePuyoLength,
+        this.eraseAssumedPuyoLength,
         this.eraseBlankNum,
         this.doujiCorrection,
         this.chainCorrection

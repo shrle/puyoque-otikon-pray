@@ -14,7 +14,7 @@ class Ranking {
     /** @type {Score[]}  */
     this._list = [
       {
-        routeCode: "",
+        routeCode: "A",
         totalColorMag: [-1, -1, -1, -1, -1],
         chainNum: -1,
         allClear: -1,
