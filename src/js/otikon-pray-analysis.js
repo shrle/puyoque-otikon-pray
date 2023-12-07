@@ -207,6 +207,7 @@ const chainForRoutePaint = function (
   map,
   nextColor,
   atackColor,
+  paintColor,
   routeCode,
   erasePuyoLength,
   eraseAssumedPuyoLength,
@@ -218,7 +219,7 @@ const chainForRoutePaint = function (
   field.setAllNextColor(nextColor);
   //field.deletePuyos(route);
   //field.deletePuyosFromCode(routeCode);
-  field.setPuyosColorFromCode(routeCode, atackColor);
+  field.setPuyosColorFromCode(routeCode, paintColor);
 
   let deleteCount = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   //let deleteAreaCount = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -399,6 +400,19 @@ const analysisForRouteDelete = function (
   doujiCorrection,
   chainCorrection
 ) {
+  console.log("analysisForRouteDelete");
+  console.dir({
+    routeCodeList,
+    routeCodeLength,
+    map,
+    nextColor,
+    atackColor,
+    erasePuyoLength,
+    eraseAssumedPuyoLength,
+    eraseBlankNum,
+    doujiCorrection,
+    chainCorrection,
+  });
   let ranking = new Ranking(50, atackColor);
   const field = PuyoqueStd.createField(fieldWidth, fieldHeight);
 
@@ -433,12 +447,27 @@ const analysisForRoutePaint = function (
   map,
   nextColor,
   atackColor,
+  paintColor,
   erasePuyoLength,
   eraseAssumedPuyoLength,
   eraseBlankNum,
   doujiCorrection,
   chainCorrection
 ) {
+  console.log("analysisForRoutePaint");
+  console.dir({
+    routeCodeList,
+    routeCodeLength,
+    map,
+    nextColor,
+    atackColor,
+    paintColor,
+    erasePuyoLength,
+    eraseAssumedPuyoLength,
+    eraseBlankNum,
+    doujiCorrection,
+    chainCorrection,
+  });
   const field = PuyoqueStd.createField(fieldWidth, fieldHeight);
   let ranking = new Ranking(50, atackColor);
 
@@ -451,6 +480,7 @@ const analysisForRoutePaint = function (
       map,
       nextColor,
       atackColor,
+      paintColor,
       route,
       erasePuyoLength,
       eraseAssumedPuyoLength,

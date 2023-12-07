@@ -131,12 +131,24 @@
         </label>
       </div>
 
-      <div>
+      <div class="mb-3">
         <button @click="analysisStart">解析</button>
+        <div v-if="isAnalyzing">
+          解析中
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
       </div>
-
+      <div>
+        <button @click="showMaps = true" class="me-2">マップ一覧</button>
+        <button @click="showMaps = false">解析結果</button>
+      </div>
       <!--最終盤面一覧-->
-      <div class="d-flex flex-row flex-wrap col-xs-12 col-md-12 mx-auto">
+      <div
+        class="d-flex flex-row flex-wrap col-xs-12 col-md-12 mx-auto"
+        v-if="!showMaps"
+      >
         <div
           v-for="(map, index) in rankingLastMaps"
           class="me-1 mb-3 position-relative"
@@ -157,10 +169,30 @@
               />
             </template>
           </div>
-          <div class="m-2 bg-white" v-if="showRankingRouteMapIndex == index">
+
+          <!-- ルート表示 -->
+          <div
+            class="chance_map position-absolute top-0 start-0 m-0 mt-3 p-0"
+            v-if="showRankingRouteMapIndex == index"
+          >
+            <template v-for="(line, y) in displayMap">
+              <div
+                v-for="(imgNum, x) in line"
+                :class="{
+                  'route-chip': isRoute(x, y),
+                  'not-route-chip': !isRoute(x, y),
+                }"
+                :key="x"
+              >
+                <img :src="imgUrl(imgNum)" alt="" class="m-0" />
+              </div>
+            </template>
+            <!--
+
             <pre class="route_map position-absolute top-0 start-0">{{
               rankingRouteMaps[index]
             }}</pre>
+            -->
           </div>
         </div>
       </div>
@@ -174,7 +206,10 @@
       </div>
       -->
       <!--連鎖のタネ一覧-->
-      <div class="d-flex flex-row flex-wrap col-xs-12 col-md-12 mx-auto">
+      <div
+        class="d-flex flex-row flex-wrap col-xs-12 col-md-12 mx-auto"
+        v-if="showMaps"
+      >
         <div v-for="(map, index) in maps" class="me-1 mb-3" :key="index">
           <div class="chance_map m-0 ml-1 mt-3" @click="selectMap(index)">
             <template v-for="line in map">
@@ -241,6 +276,46 @@
   padding: 0px;
 }
 
+.chance_map div {
+  width: 20px;
+  height: 18px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.chance_map .route-chip {
+  background-color: #ffffff;
+  width: 20px;
+  height: 18px;
+  padding: 0px;
+  margin: 0px;
+}
+.chance_map .not-route-chip {
+  width: 20px;
+  height: 18px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.chance_map .route-chip img {
+  width: 20px;
+  height: 18px;
+  padding: 0px;
+  margin: 0px;
+  opacity: 0.2;
+}
+
+.chance_map .not-route-chip img {
+  width: 20px;
+  height: 18px;
+  padding: 0px;
+  margin: 0px;
+}
+.chance_map div img {
+  width: 20px;
+  height: 18px;
+}
+
 .chance_map img {
   width: 20px;
   height: 18px;
@@ -261,7 +336,11 @@ import PuyoqueStd from "@/js/puyoquestd";
 import array2dInit from "@/js/array2d-init";
 import codeToPoint from "@/js/code-to-point.js";
 import settings from "@/js/charcter-settings";
-import { getLastMap } from "@/js/otikon-pray-analysis";
+import {
+  analysisForRouteDelete,
+  analysisForRoutePaint,
+  getLastMap,
+} from "@/js/otikon-pray-analysis";
 
 const puyoColor = PuyoqueStd.puyoColor;
 
@@ -278,6 +357,7 @@ export default {
       onload: false,
       routeCodeList: [],
       analysis: {},
+      isAnalyzing: false,
       fieldWidth: 8,
       fieldHeight: 6,
       displayMap: [],
@@ -307,6 +387,7 @@ export default {
         "atackRatePurple",
       ],
       atackColor: puyoColor.blue,
+      paintColor: puyoColor.blue,
       nextColor: puyoColor.blue,
       ranking: [
         {
@@ -316,17 +397,26 @@ export default {
           deleteCount: -1,
         },
       ],
+      rankingList: [],
       rankingMaxLength: 50,
       rankingRouteMaps: [],
       rankingLastMaps: [],
       showRankingRouteMapIndex: undefined,
       maps: [],
+      showMaps: true,
       pageId: "",
       pageList: [
         { id: "charmyDraco", name: "チャーミードラコ" },
         { id: "moreSuspiciousKlug", name: "もっとあやしいクルーク" },
         { id: "anndoRingo", name: "あんどうりんご" },
+        { id: "spaceEcolo", name: "スペース☆エコロ" },
         { id: "whiteMarle", name: "しろいマール" },
+        { id: "midsummerAmanone", name: "なつぞらのアマノネ" },
+        { id: "attariPoobo", name: "あたり＆プーボ" },
+        {
+          id: "cureBloomCureEgrette",
+          name: "キュアブルーム＆キュアイーグレット",
+        },
         //{ id: "", name: "" },
       ],
     };
@@ -341,9 +431,67 @@ export default {
         return;
       }
       this.pageId = id;
-      this.analysis = setting.analysis;
+      this.analysis = (() => {
+        if (setting.selectRouteBehavior === "paint") {
+          const paintColor = setting.color;
+          return (
+            routeCodeList,
+            routeCodeLength,
+            map,
+            nextColor,
+            atackColor,
+            erasePuyoLength,
+            eraseAssumedPuyoLength,
+            eraseBlankNum,
+            doujiCorrection,
+            chainCorrection
+          ) => {
+            return analysisForRoutePaint(
+              routeCodeList,
+              routeCodeLength,
+              map,
+              nextColor,
+              atackColor,
+              paintColor,
+              erasePuyoLength,
+              eraseAssumedPuyoLength,
+              eraseBlankNum,
+              doujiCorrection,
+              chainCorrection
+            );
+          };
+        } else {
+          return (
+            routeCodeList,
+            routeCodeLength,
+            map,
+            nextColor,
+            atackColor,
+            erasePuyoLength,
+            eraseAssumedPuyoLength,
+            eraseBlankNum,
+            doujiCorrection,
+            chainCorrection
+          ) => {
+            return analysisForRouteDelete(
+              routeCodeList,
+              routeCodeLength,
+              map,
+              nextColor,
+              atackColor,
+              erasePuyoLength,
+              eraseAssumedPuyoLength,
+              eraseBlankNum,
+              doujiCorrection,
+              chainCorrection
+            );
+          };
+        }
+      })();
       this.atackColor = setting.color;
+      this.paintColor = setting.color;
       this.nextColor = setting.color;
+      this.chainCorrection = setting.chainCorrection;
       this.maps = setting.maps;
       this.erasePuyoLength = setting.erasePuyoLength;
       this.selectRouteBehavior = setting.selectRouteBehavior;
@@ -354,6 +502,8 @@ export default {
       this.init(id);
     },
     analysisStart: function () {
+      if (this.isAnalyzing) return;
+      this.isAnalyzing = true;
       console.log("selectRouteNum: " + this.selectRouteNum);
 
       console.log("analysis start!");
@@ -372,9 +522,14 @@ export default {
         this.doujiCorrection,
         this.chainCorrection
       );
+      console.log("rankingList");
+      console.dir(rankingList);
 
       this.rankingToRouteMapping(rankingList);
       this.rankingToLastMapping(rankingList);
+      this.rankingList = rankingList;
+      this.isAnalyzing = false;
+      this.showMaps = false;
     },
 
     routeCodeToMapText: function (routeCode) {
@@ -402,8 +557,8 @@ export default {
     },
 
     rankingToLastMapping: function (rankingList) {
-      const atackColor =
-        this.selectRouteBehavior === "paint" ? this.atackColor : undefined;
+      const paintColor =
+        this.selectRouteBehavior === "paint" ? this.paintColor : undefined;
       const map = this.maps[this.selectMapIndex];
       this.rankingLastMaps = [];
       for (let i = 0; i < rankingList.length; i++) {
@@ -412,7 +567,7 @@ export default {
           this.nextColor,
           rankingList[i].route,
           this.erasePuyoLength,
-          atackColor
+          paintColor
         );
         this.rankingLastMaps.push(lastMap);
       }
@@ -435,6 +590,14 @@ export default {
       this.displayMap = this.maps[index];
     },
 
+    isRoute: function (x, y) {
+      const routeCode = this.rankingList[this.showRankingRouteMapIndex].route;
+      for (const c of routeCode) {
+        const p = codeToPoint[c];
+        if (p.x === x && p.y === y) return true;
+      }
+      return false;
+    },
     //chainEnd: function (chainNum) {},
 
     imgUrl: function (imgNum) {
