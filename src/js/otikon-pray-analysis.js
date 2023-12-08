@@ -106,12 +106,10 @@ const lastDeletePuyos = function (
       field.targetsAround(points, (x, y, color) => {
         if (field.colorMultComp(x, y, nonPuyos)) {
           deleteCount[color]++;
-          field.deletePuyo(x, y);
         } else if (field.colorComp(x, y, c.kataPuyo)) {
           field.setColor(x, y, c.ojamaChanging);
         }
       });
-      field.deletePuyos(points); // 連結部分を消す
     }
   });
 

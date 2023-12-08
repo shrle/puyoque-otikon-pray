@@ -11,6 +11,10 @@ const routes = [
     path: "/seeds/:id",
     name: "seeds",
     component: SeedsView,
+    meta: {
+      title: "ぷよクエ-落ちコンお祈りルート探索くん",
+      desc: "ぷよクエの落ちコンしそうなルート探索するアプリです",
+    },
   },
 ];
 

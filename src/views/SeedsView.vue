@@ -133,6 +133,7 @@
 
       <div class="mb-3">
         <button @click="analysisStart">解析</button>
+        <button @click="testAnarysis">テスト</button>
         <div v-if="isAnalyzing">
           解析中
           <div class="spinner-border text-primary" role="status">
@@ -504,15 +505,42 @@ export default {
     analysisStart: function () {
       if (this.isAnalyzing) return;
       this.isAnalyzing = true;
-      console.log("selectRouteNum: " + this.selectRouteNum);
+      setTimeout(() => {
+        console.log("selectRouteNum: " + this.selectRouteNum);
 
-      console.log("analysis start!");
-      const routeCodeLength = routeLength[this.selectRouteNum];
+        console.log("analysis start!");
+        const routeCodeLength = routeLength[this.selectRouteNum];
+        const map = this.maps[this.selectMapIndex];
+
+        const rankingList = this.analysis(
+          this.routeCodeList,
+          routeCodeLength,
+          map,
+          this.nextColor,
+          this.atackColor,
+          this.erasePuyoLength,
+          this.eraseAssumedPuyoLength,
+          this.eraseBlankNum,
+          this.doujiCorrection,
+          this.chainCorrection
+        );
+        console.log("rankingList");
+        console.dir(rankingList);
+
+        this.rankingToRouteMapping(rankingList);
+        this.rankingToLastMapping(rankingList);
+        this.rankingList = rankingList;
+        this.isAnalyzing = false;
+        this.showMaps = false;
+      }, 10);
+    },
+
+    testAnarysis: function () {
       const map = this.maps[this.selectMapIndex];
 
       const rankingList = this.analysis(
-        this.routeCodeList,
-        routeCodeLength,
+        ["M", "B"],
+        2,
         map,
         this.nextColor,
         this.atackColor,
@@ -524,12 +552,6 @@ export default {
       );
       console.log("rankingList");
       console.dir(rankingList);
-
-      this.rankingToRouteMapping(rankingList);
-      this.rankingToLastMapping(rankingList);
-      this.rankingList = rankingList;
-      this.isAnalyzing = false;
-      this.showMaps = false;
     },
 
     routeCodeToMapText: function (routeCode) {
