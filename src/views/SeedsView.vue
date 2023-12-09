@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h1 class="text-center h6">ぷよクエ-落ちコンお祈りルート探索くん</h1>
-    <div class="col-10 col-md-10 col-xl-6 mx-auto mb-5">
+    <div class="col-xs-12 col-10 col-md-10 col-xl-6 mx-auto mb-5">
       <!-- ページ一覧 -->
       <select v-model="pageId" v-on:change="changePage">
         <option v-for="page in pageList" :value="page.id" :key="page.id">
@@ -16,7 +16,7 @@
       </div>
 
       <!-- 表示マップ -->
-      <div class="m-0 ml-1 mt-3" id="display_map">
+      <div class="m-0 ml-1 mt-3 mb-3" id="display_map">
         <template v-for="line in displayMap">
           <img
             :src="imgUrl(imgNum)"
@@ -31,13 +31,11 @@
         <label>
           攻撃色
           <select v-model="atackColor">
-            <option
-              v-for="(item, index) in colorName"
-              :value="index - 1"
-              :key="index"
-            >
-              {{ item }}
-            </option>
+            <template v-for="(item, index) in colorName" :key="index">
+              <option :value="index - 1" v-if="index > 0">
+                {{ item }}
+              </option>
+            </template>
           </select>
         </label>
       </div>
@@ -133,7 +131,6 @@
 
       <div class="mb-3">
         <button @click="analysisStart">解析</button>
-        <button @click="testAnarysis">テスト</button>
         <div v-if="isAnalyzing">
           解析中
           <div class="spinner-border text-primary" role="status">
@@ -207,10 +204,7 @@
       </div>
       -->
       <!--連鎖のタネ一覧-->
-      <div
-        class="d-flex flex-row flex-wrap col-xs-12 col-md-12 mx-auto"
-        v-if="showMaps"
-      >
+      <div class="d-flex flex-row flex-wrap col-12 mx-auto" v-if="showMaps">
         <div v-for="(map, index) in maps" class="me-1 mb-3" :key="index">
           <div class="chance_map m-0 ml-1 mt-3" @click="selectMap(index)">
             <template v-for="line in map">
@@ -269,12 +263,28 @@
   height: 54px;
 }
 
+@media screen and (max-width: 480px) {
+  #display_map {
+    background-color: #000000;
+    display: grid;
+    grid: 36px 36px 36px 36px 36px 36px/ 40px 40px 40px 40px 40px 40px 40px 40px;
+    width: 320px;
+    padding: 0px;
+  }
+
+  #display_map img {
+    width: 40px;
+    height: 36px;
+  }
+}
+
 .chance_map {
   background-color: #000000;
   display: grid;
   grid: 18px 18px 18px 18px 18px 18px/ 20px 20px 20px 20px 20px 20px 20px 20px;
   width: 160px;
   padding: 0px;
+  line-height: 0;
 }
 
 .chance_map div {
@@ -312,20 +322,12 @@
   padding: 0px;
   margin: 0px;
 }
-.chance_map div img {
-  width: 20px;
-  height: 18px;
-}
 
 .chance_map img {
   width: 20px;
   height: 18px;
-}
-
-pre.route_map {
-  font-size: 30px;
-  line-height: 70%;
-  overflow: hidden;
+  padding: 0px;
+  margin: 0px;
 }
 </style>
 
@@ -533,25 +535,6 @@ export default {
         this.isAnalyzing = false;
         this.showMaps = false;
       }, 10);
-    },
-
-    testAnarysis: function () {
-      const map = this.maps[this.selectMapIndex];
-
-      const rankingList = this.analysis(
-        ["M", "B"],
-        2,
-        map,
-        this.nextColor,
-        this.atackColor,
-        this.erasePuyoLength,
-        this.eraseAssumedPuyoLength,
-        this.eraseBlankNum,
-        this.doujiCorrection,
-        this.chainCorrection
-      );
-      console.log("rankingList");
-      console.dir(rankingList);
     },
 
     routeCodeToMapText: function (routeCode) {
