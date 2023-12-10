@@ -1037,6 +1037,20 @@
     "minimatch" "^3.0.4"
     "strip-json-comments" "^3.1.1"
 
+"@gtm-support/core@^2.0.0":
+  "integrity" "sha512-GYA9LfLUcsWJBpL24e3UXjbzl/E9qYWWsEtEJU2hiDFUC07WhxgKnH7cuZk82Ld+7Iz2ZVQaDDGT0kxZxQwPLQ=="
+  "resolved" "https://registry.npmjs.org/@gtm-support/core/-/core-2.2.0.tgz"
+  "version" "2.2.0"
+
+"@gtm-support/vue-gtm@^2.2.0":
+  "integrity" "sha512-7nhBTRkTG0mD+7r7JvNalJz++YwszZk0oP1HIY6fCgz6wNKxT6LuiXCqdPrZmNPe/WbPIKuqxGZN5s+i6NZqow=="
+  "resolved" "https://registry.npmjs.org/@gtm-support/vue-gtm/-/vue-gtm-2.2.0.tgz"
+  "version" "2.2.0"
+  dependencies:
+    "@gtm-support/core" "^2.0.0"
+  optionalDependencies:
+    "vue-router" ">= 4.1.0 < 5.0.0"
+
 "@hapi/hoek@^9.0.0":
   "integrity" "sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ=="
   "resolved" "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.3.0.tgz"
@@ -6440,7 +6454,7 @@
     "hash-sum" "^2.0.0"
     "watchpack" "^2.4.0"
 
-"vue-router@^4.0.3":
+"vue-router@^4.0.3", "vue-router@>= 4.1.0 < 5.0.0":
   "integrity" "sha512-DIUpKcyg4+PTQKfFPX88UWhlagBEBEfJ5A8XDXRJLUnZOvcpMF8o/dnL90vpVkGaPbjvXazV/rC1qBKrZlFugw=="
   "resolved" "https://registry.npmjs.org/vue-router/-/vue-router-4.2.5.tgz"
   "version" "4.2.5"
@@ -6460,7 +6474,7 @@
   "resolved" "https://registry.npmjs.org/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz"
   "version" "1.9.1"
 
-"vue@*", "vue@^2 || ^3.2.13", "vue@^3.2.0", "vue@^3.2.13", "vue@3.3.8":
+"vue@*", "vue@^2 || ^3.2.13", "vue@^3.2.0", "vue@^3.2.13", "vue@>= 3.2.0 < 4.0.0", "vue@3.3.8":
   "integrity" "sha512-5VSX/3DabBikOXMsxzlW8JyfeLKlG9mzqnWgLQLty88vdZL7ZJgrdgBOmrArwxiLtmS+lNNpPcBYqrhE6TQW5w=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-3.3.8.tgz"
   "version" "3.3.8"
