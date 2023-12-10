@@ -23,4 +23,9 @@ const router = createRouter({
   routes,
 });
 
+const DEFAULT_TITLE = "puyosim";
+router.afterEach((to) => {
+  const title = to.meta.title ? to.meta.title : DEFAULT_TITLE;
+  document.title = title;
+});
 export default router;
