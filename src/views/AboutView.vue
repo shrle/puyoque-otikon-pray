@@ -1,5 +1,44 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="about col-xs-12 col-10 col-md-10 col-xl-6 mx-auto mb-5">
+    <h1 class="text-center h6">ぷよクエ-落ちコンお祈りルート探索くん</h1>
+    <div>
+      <router-link :to="{ name: 'seeds', params: { id: 'charmyDraco' } }">
+        アプリに戻る
+      </router-link>
+    </div>
+    <h2 class="mt-3 mb-3">これは何？</h2>
+    <p>
+      このアプリはぷよクエの落ちコンが起きそうな消え方のなぞり消しを探しすことができます
+    </p>
+    <p>
+      最善な手を計算するものでは無いためこれをヒントにより良い手を見つけ出してください
+    </p>
+    <h2 class="mt-5 mb-3">使い方</h2>
+
+    <ol>
+      <li>ページ上部のスキル種別を選んでください</li>
+      <li>ページ下部のマップ一覧から目的のものをタップして選んでください</li>
+
+      <li>各種設定を行い「解析」ボタンを押します</li>
+
+      <p>
+        注意：なぞり消し数を多くすると<strong class="text-danger"
+          >解析にとても時間がかかります</strong
+        ><br />
+        12個消しを選んだ場合スマートフォンだと15秒ほどかかる場合もあります
+      </p>
+
+      <li>
+        ページ下部に解析結果が出ます<br />
+        解析結果にはなぞり消しを行った後の最終的な盤面が表示されています
+      </li>
+      <li>解析結果をタップするとなぞり消しの形が表示されます</li>
+    </ol>
   </div>
 </template>
+
+<style>
+li {
+  margin-bottom: 20px;
+}
+</style>

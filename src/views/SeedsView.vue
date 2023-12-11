@@ -1,17 +1,24 @@
 <template>
   <div class="home">
     <h1 class="text-center h6">ぷよクエ-落ちコンお祈りルート探索くん</h1>
+
     <div class="col-xs-12 col-10 col-md-10 col-xl-6 mx-auto mb-5">
-      <!-- ページ一覧 -->
-      <select v-model="pageId" v-on:change="changePage">
-        <option v-for="page in pageList" :value="page.id" :key="page.id">
-          {{ page.name }}
-        </option>
-      </select>
-      <div v-if="!onload">
-        データ読込中
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+      <div>
+        <router-link :to="{ name: 'about' }"> 使い方 </router-link>
+      </div>
+      <div>
+        スキル種別
+        <!-- ページ一覧 -->
+        <select v-model="pageId" v-on:change="changePage">
+          <option v-for="page in pageList" :value="page.id" :key="page.id">
+            {{ page.name }}
+          </option>
+        </select>
+        <div v-if="!onload">
+          データ読込中
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
         </div>
       </div>
 
@@ -430,6 +437,7 @@ export default {
     init: function (id) {
       const setting = settings[id];
       if (!setting) {
+        this.pageId = undefined;
         this.onload = true;
         return;
       }
@@ -593,6 +601,11 @@ export default {
     selectMap: function (index) {
       this.selectMapIndex = index;
       this.displayMap = this.maps[index];
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "instant",
+      });
     },
 
     isRoute: function (x, y) {
