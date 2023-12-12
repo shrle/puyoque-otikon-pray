@@ -66,8 +66,8 @@
         <label>
           ぷよが消える連結数
           <select v-model="erasePuyoLength">
-            <option v-for="(item, index) in 48" :value="index + 1" :key="index">
-              {{ item }}
+            <option v-for="(item, index) in 47" :value="index + 2" :key="index">
+              {{ item + 1 }}
             </option>
           </select>
         </label>
@@ -506,6 +506,8 @@ export default {
       this.maps = setting.maps;
       this.erasePuyoLength = setting.erasePuyoLength;
       this.selectRouteBehavior = setting.selectRouteBehavior;
+      this.eraseAssumedPuyoLength = setting.eraseAssumedPuyoLength;
+      this.eraseBlankNum = setting.eraseBlankNum;
     },
     changePage: function (e) {
       const id = e.target.value;
