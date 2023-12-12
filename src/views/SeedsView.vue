@@ -564,7 +564,7 @@ export default {
     rankingToRouteMapping: function (rankingList) {
       this.rankingRouteMaps = [];
       for (let i = 0; i < rankingList.length; i++) {
-        const map = this.routeCodeToMapText(rankingList[i].route);
+        const map = this.routeCodeToMapText(rankingList[i].routeCode);
         this.rankingRouteMaps.push(map);
       }
     },
@@ -578,7 +578,7 @@ export default {
         const lastMap = getLastMap(
           map,
           this.nextColor,
-          rankingList[i].route,
+          rankingList[i].routeCode,
           this.erasePuyoLength,
           paintColor
         );
@@ -609,7 +609,8 @@ export default {
     },
 
     isRoute: function (x, y) {
-      const routeCode = this.rankingList[this.showRankingRouteMapIndex].route;
+      const routeCode =
+        this.rankingList[this.showRankingRouteMapIndex].routeCode;
       for (const c of routeCode) {
         const p = codeToPoint[c];
         if (p.x === x && p.y === y) return true;

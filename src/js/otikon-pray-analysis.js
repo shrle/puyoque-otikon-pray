@@ -398,19 +398,6 @@ const analysisForRouteDelete = function (
   doujiCorrection,
   chainCorrection
 ) {
-  console.log("analysisForRouteDelete");
-  console.dir({
-    routeCodeList,
-    routeCodeLength,
-    map,
-    nextColor,
-    atackColor,
-    erasePuyoLength,
-    eraseAssumedPuyoLength,
-    eraseBlankNum,
-    doujiCorrection,
-    chainCorrection,
-  });
   let ranking = new Ranking(50, atackColor);
   const field = PuyoqueStd.createField(fieldWidth, fieldHeight);
 
@@ -430,7 +417,7 @@ const analysisForRouteDelete = function (
       chainCorrection
     );
 
-    result.route = route;
+    result.routeCode = route;
     ranking.add(result);
   }
 
@@ -452,20 +439,6 @@ const analysisForRoutePaint = function (
   doujiCorrection,
   chainCorrection
 ) {
-  console.log("analysisForRoutePaint");
-  console.dir({
-    routeCodeList,
-    routeCodeLength,
-    map,
-    nextColor,
-    atackColor,
-    paintColor,
-    erasePuyoLength,
-    eraseAssumedPuyoLength,
-    eraseBlankNum,
-    doujiCorrection,
-    chainCorrection,
-  });
   const field = PuyoqueStd.createField(fieldWidth, fieldHeight);
   let ranking = new Ranking(50, atackColor);
 
@@ -487,7 +460,7 @@ const analysisForRoutePaint = function (
       chainCorrection
     );
 
-    result.route = route;
+    result.routeCode = route;
     ranking.add(result);
   }
 
