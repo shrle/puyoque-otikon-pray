@@ -1,12 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+//import HomeView from "../views/HomeView.vue";
+import FieldView from "@/views/FieldView";
 import SeedsView from "@/views/SeedsView";
 import AboutView from "@/views/AboutView";
+import TestView from "@/views/TestView";
 const routes = [
   {
     path: "/",
-    name: "home",
-    component: HomeView,
+    name: "field",
+    component: FieldView,
   },
   {
     path: "/about",
@@ -21,6 +23,11 @@ const routes = [
       title: "ぷよクエ-落ちコンお祈りルート探索くん",
       desc: "ぷよクエの落ちコンしそうなルート探索するアプリです",
     },
+  },
+  {
+    path: "/test",
+    name: "test",
+    component: TestView,
   },
 ];
 

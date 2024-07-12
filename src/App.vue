@@ -1,5 +1,5 @@
 <template>
-  <div class="container col-12">
+  <div>
     <router-view />
   </div>
 </template>

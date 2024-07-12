@@ -1,5 +1,6 @@
 import PuyoqueStd from "@/js/puyoquestd.js";
 import Ranking from "@/js/ranking.js";
+import codeToPoint from "./code-to-point.js";
 
 const fieldWidth = 8;
 const fieldHeight = 6;
@@ -122,7 +123,7 @@ const lastDeletePuyos = function (
 const chainForRouteDelete = function (
   field,
   map,
-  nextColor,
+  nextColors,
   atackColor,
   routeCode,
   erasePuyoLength,
@@ -132,8 +133,7 @@ const chainForRouteDelete = function (
   chainCorrection
 ) {
   field.setMapColor(map);
-  field.setAllNextColor(nextColor);
-  field.deletePuyosFromCode(routeCode);
+  field.setNextColors(nextColors);
 
   let deleteCount = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   //let deleteAreaCount = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -141,6 +141,16 @@ const chainForRouteDelete = function (
   let totalColorMag = [0, 0, 0, 0, 0]; // 各色の威力倍率
   let chainNum = -1;
   let chained = true;
+
+  /**
+   * ルート上になぞることが出来ないぷよ(おじゃまぷよ、固ぷよ)が存在する場合
+   * chained = false;にすることで連鎖処理を終了させる
+   */
+  if (existOjama(field, routeCode)) {
+    chained = false;
+  }
+
+  field.deletePuyosFromCode(routeCode);
 
   while (chained) {
     chained = false;
@@ -189,6 +199,7 @@ const chainForRouteDelete = function (
     }
 
     deleteCount = arraysSum(deleteCount, ret.deleteCount);
+    ojamaChangingToOjama(field);
   }
 
   let allClear = field.isAllClear();
@@ -203,7 +214,7 @@ const chainForRouteDelete = function (
 const chainForRoutePaint = function (
   field,
   map,
-  nextColor,
+  nextColors,
   atackColor,
   paintColor,
   routeCode,
@@ -214,7 +225,7 @@ const chainForRoutePaint = function (
   chainCorrection
 ) {
   field.setMapColor(map);
-  field.setAllNextColor(nextColor);
+  field.setNextColors(nextColors);
   //field.deletePuyos(route);
   //field.deletePuyosFromCode(routeCode);
   field.setPuyosColorFromCode(routeCode, paintColor);
@@ -273,6 +284,7 @@ const chainForRoutePaint = function (
     }
 
     deleteCount = arraysSum(deleteCount, ret.deleteCount);
+    ojamaChangingToOjama(field);
   }
 
   let allClear = field.isAllClear();
@@ -283,6 +295,20 @@ const chainForRoutePaint = function (
     allClear,
     deleteCount,
   };
+};
+
+/**
+ * 連鎖に巻き込まれた状態の固ぷよ(c.ojamaChanging)があればおじゃまぷよに変換する
+ * 1連鎖の終わりごとに呼び出される
+ */
+const ojamaChangingToOjama = (field) => {
+  for (let y = 0; y < fieldHeight; y++) {
+    for (let x = 0; x < fieldWidth; x++) {
+      if (field.colorComp(x, y, c.ojamaChanging)) {
+        field.setColor(x, y, c.ojama);
+      }
+    }
+  }
 };
 
 /**
@@ -401,9 +427,10 @@ const analysisForRouteDelete = function (
   let ranking = new Ranking(50, atackColor);
   const field = PuyoqueStd.createField(fieldWidth, fieldHeight);
 
-  const start = Date.now();
+  //const start = Date.now();
   for (let i = 0; i < routeCodeLength; i++) {
     const route = routeCodeList[i];
+
     let result = chainForRouteDelete(
       field,
       map,
@@ -421,9 +448,24 @@ const analysisForRouteDelete = function (
     ranking.add(result);
   }
 
-  const end = Date.now() - start;
-  console.log(end);
+  //const end = Date.now() - start;
+  //console.log("analysis time: " + end);
   return ranking.list;
+};
+
+/**
+ * 指定座標になぞることが出来ないぷよがあるか判定します
+ * @param {Field} field
+ * @param {String} routeCode
+ * @returns {Boolean}
+ */
+const existOjama = (field, routeCode) => {
+  for (const code of routeCode) {
+    const p = codeToPoint[code];
+    if (field.colorMultComp(p.x, p.y, [c.ojama, c.kataPuyo])) return true;
+  }
+
+  return false;
 };
 
 const analysisForRoutePaint = function (
@@ -471,7 +513,7 @@ const analysisForRoutePaint = function (
 
 const getLastMap = function (
   map,
-  nextColor,
+  nextColors,
   routeCode,
   erasePuyoLength,
   paintColor
@@ -479,7 +521,7 @@ const getLastMap = function (
   let field = PuyoqueStd.createField(fieldWidth, fieldHeight);
 
   field.setMapColor(map);
-  field.setAllNextColor(nextColor);
+  field.setNextColors(nextColors);
   if (paintColor) {
     field.setPuyosColorFromCode(routeCode, paintColor);
   } else {
@@ -500,6 +542,7 @@ const getLastMap = function (
       break;
     } else {
       ret = deletePuyos(field, erasePuyoLength);
+      ojamaChangingToOjama(field);
       chained = ret.chained;
     }
   }

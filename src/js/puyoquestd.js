@@ -381,6 +381,16 @@ class Field {
     }
   }
 
+  /**
+   *
+   * @param {Number[]} Number is puyo index
+   */
+  setNextColors(colors) {
+    for (let x = 0; x < this.width; x++) {
+      this.setNextPuyo(x, colors[x], false);
+    }
+  }
+
   getMap() {
     let cloneMap = [];
 

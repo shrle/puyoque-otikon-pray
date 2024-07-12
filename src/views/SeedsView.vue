@@ -523,12 +523,14 @@ export default {
         console.log("analysis start!");
         const routeCodeLength = routeLength[this.selectRouteNum];
         const map = this.maps[this.selectMapIndex];
+        const nc = this.nextColor;
+        const nextPuyos = [nc, nc, nc, nc, nc, nc, nc, nc];
 
         const rankingList = this.analysis(
           this.routeCodeList,
           routeCodeLength,
           map,
-          this.nextColor,
+          nextPuyos,
           this.atackColor,
           this.erasePuyoLength,
           this.eraseAssumedPuyoLength,
@@ -576,10 +578,14 @@ export default {
         this.selectRouteBehavior === "paint" ? this.paintColor : undefined;
       const map = this.maps[this.selectMapIndex];
       this.rankingLastMaps = [];
+
+      const nc = this.nextColor;
+      const nextPuyos = [nc, nc, nc, nc, nc, nc, nc, nc];
+
       for (let i = 0; i < rankingList.length; i++) {
         const lastMap = getLastMap(
           map,
-          this.nextColor,
+          nextPuyos,
           rankingList[i].routeCode,
           this.erasePuyoLength,
           paintColor

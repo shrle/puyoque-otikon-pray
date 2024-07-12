@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <h1 class="text-center h6">ぷよクエ-落ちコンお祈りルート探索くん</h1>
+    <FieldCapture></FieldCapture>
     <div class="col-10 col-md-10 col-xl-6 mx-auto mb-5">
       <div>連鎖数:{{ chainNum }}</div>
       <div class="d-flex flex-row mb-2">
@@ -171,6 +172,7 @@
 
 <script>
 // @ is an alias to /src
+import FieldCapture from "@/components/FieldCapture.vue";
 import PuyoqueStd from "@/js/puyoquestd.js";
 import PuyoqueCanvas from "@/js/puyoquecanvas.js";
 
@@ -186,7 +188,7 @@ class History {
 
 export default {
   name: "HomeView",
-  components: {},
+  components: { FieldCapture },
   mounted() {
     this.field = PuyoqueStd.createField(this.fieldWidth, this.fieldHeight);
     this.field.setMapColor(this.maps[0]);
