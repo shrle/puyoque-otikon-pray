@@ -171,16 +171,17 @@
 
         <!-- ルート表示 -->
         <div class="map route-map" v-if="showRankingRouteMapIndex == index">
-          <template v-for="(line, y) in puyoMap">
-            <img
-              :src="puyoImgUrl(imgNum)"
-              v-for="(imgNum, x) in line"
+          <template v-for="(line, y) in puyoMap" :key="y">
+            <div
               :class="{
                 'route-chip': isRoute(x, y),
                 'not-route-chip': !isRoute(x, y),
               }"
+              v-for="(imgNum, x) in line"
               :key="x"
-            />
+            >
+              <img :src="puyoImgUrl(imgNum)" />
+            </div>
           </template>
           <!--
 
@@ -660,8 +661,8 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 10px 10px;
-  width: 100%;
 }
 
 .result-maps .map-container {
@@ -671,19 +672,16 @@ export default {
 .result-maps .map {
   background-color: #222244;
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template: repeat(6, 20px) / repeat(8, 22.5px);
+
   width: 180px;
+  height: 120px;
 }
 
 .result-maps .map.route-map {
   position: absolute;
   left: 0;
   top: 0;
-
-  background-color: #222244;
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  width: 180px;
 }
 
 .result-maps .map img {
@@ -695,11 +693,11 @@ export default {
   background-color: #ffffff;
 }
 
-.result-maps .map .not-route-chip {
-  background-color: transparent;
+.result-maps .map .route-chip > img {
+  opacity: 0.5;
 }
 
-.result-maps .map img.route-chip {
-  opacity: 0.5;
+.result-maps .map .not-route-chip {
+  background-color: transparent;
 }
 </style>
