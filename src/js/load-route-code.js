@@ -32,8 +32,9 @@ let routeCode;
 
 const loadRouteCode = async () => {
   const start = Date.now();
-  console.dir(__dirname);
-  const response = await fetch(__dirname + "data/random-route_1-12.txt.br");
+  const response = await fetch(
+    process.env.BASE_URL + "data/random-route_1-12.txt.br"
+  );
   const arrayBuffer = await response.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
   const uint8Array = decompress(buffer);
