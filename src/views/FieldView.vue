@@ -205,6 +205,7 @@
       @set-color-for-puyo="setColorForPuyos"
       :extractionColorMap="extractionColorMap"
       v-show="step === 2"
+      ref="PuyoColorPicker"
     ></PuyoColorPicker>
 
     <NextRangeSelector
@@ -219,6 +220,7 @@
       @set-color-for-nextpuyos="setColorForNextPuyos"
       :extractionColorNextPuyos="extractionColorNextPuyos"
       v-show="step === 4"
+      ref="NextPuyoColorPicker"
     ></NextPuyoColorPicker>
   </div>
 </template>
@@ -306,11 +308,18 @@ export default {
   },
   watch: {
     step() {
-      if (this.step === 1) {
-        this.$refs.FieldRangeSelector.showCanvas();
+      if (this.step === 0) {
+        document.exitFullscreen();
+      } else if (this.step === 1) {
+        this.$refs.FieldRangeSelector.active();
+      } else if (this.step === 2) {
+        this.$refs.PuyoColorPicker.active();
       } else if (this.step === 3) {
-        this.$refs.NextRangeSelector.showCanvas();
+        this.$refs.NextRangeSelector.active();
+      } else if (this.step === 4) {
+        this.$refs.NextPuyoColorPicker.active();
       } else if (this.step === 5) {
+        document.exitFullscreen();
         this.convertColorMapToPuyoMap();
         this.convertColorNextPuyosToNextPuyos();
       }

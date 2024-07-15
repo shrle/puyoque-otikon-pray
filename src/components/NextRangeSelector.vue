@@ -4,13 +4,13 @@
       <div class="fieldcap-frame-controlls">
         <menu class="fieldcap-frame-buttons">
           <div class="left">
-            <button class="fieldcap-frame-cancel" @click="prev">
+            <button class="fieldcap-frame-cancel" @click="prev" disabled>
               <span class="material-symbols-outlined"> arrow_back </span>
             </button>
           </div>
           <div class="center"></div>
           <div class="right">
-            <button class="fieldcap-frame-ok" @click="ok">
+            <button class="fieldcap-frame-ok" @click="ok" disabled>
               <span class="material-symbols-outlined"> arrow_forward </span>
             </button>
           </div>
@@ -96,7 +96,7 @@ import {
   setImage,
   setLeftTopCursorPoint,
   setRightBottomCursorPoint,
-  getCursorAreaImage,
+  //getCursorAreaImage,
 } from "@/js/pixi-range-selector";
 import * as NextColorPicker from "@/js/next-color-picker";
 import array2dInit from "@/js/array2d-init";
@@ -165,6 +165,25 @@ export default {
         canvas.parentNode.removeChild(canvas);
       }
     },
+
+    allButtonEnable() {
+      document
+        .querySelectorAll(".next-range-selector button")
+        .forEach((button) => {
+          button.disabled = false;
+        });
+    },
+    allButtonDisabled() {
+      document
+        .querySelectorAll(".next-range-selector button")
+        .forEach((button) => {
+          button.disabled = true;
+        });
+    },
+    active() {
+      this.showCanvas();
+      setTimeout(this.allButtonEnable, 1000);
+    },
     showCanvas() {
       this.removeCanvas();
       const app = getPixiApp();
@@ -215,11 +234,13 @@ export default {
     },
 
     prev() {
+      this.allButtonDisabled();
       NextColorPicker.hideDrawArea();
       this.$emit("prev-step");
     },
     ok: async function () {
-      this.areaImage = await getCursorAreaImage();
+      this.allButtonDisabled();
+      //this.areaImage = await getCursorAreaImage();
       const map = NextColorPicker.extractColorCodeFromMap();
       this.saveCursorArea();
       this.saveColorPickerPoint();

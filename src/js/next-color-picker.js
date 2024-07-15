@@ -1,7 +1,11 @@
 import * as PIXI from "pixi.js";
 import array2dInit from "./array2d-init";
 import convert from "color-convert";
-import { getCaptureContainer, getCursorArea } from "./pixi-range-selector";
+import {
+  getCaptureContainer,
+  getCursorArea,
+  getPointToImageRGB,
+} from "./pixi-range-selector";
 
 const fieldWidth = 8;
 const fieldHeight = 1;
@@ -83,6 +87,7 @@ const getMapChipArea = (x, y, wChip, hChip) => {
   };
 };
 
+/*
 const getRGB = (x, y) => {
   // 抽出する矩形を定義
   const rect = getCursorArea();
@@ -99,6 +104,7 @@ const getRGB = (x, y) => {
 
   return { r, g, b };
 };
+*/
 
 const getCursorAreaImage = () => {
   // 抽出する矩形を定義
@@ -121,7 +127,7 @@ const pickColor = (mapX, mapY) => {
   const area = getMapChipArea(mapX, mapY, fieldWidth, fieldHeight);
   const p = calcPickPoint(area.x, area.y, area.width, area.height);
 
-  return getRGB(p.x, p.y);
+  return getPointToImageRGB(p.x, p.y);
 };
 
 /**
@@ -157,7 +163,7 @@ const extractColorCodeFromMap = () => {
 };
 
 const getColorCode = (x, y) => {
-  const { r, g, b } = getRGB(x, y);
+  const { r, g, b } = getPointToImageRGB(x, y);
   return convert.rgb.hex(r, g, b);
 };
 

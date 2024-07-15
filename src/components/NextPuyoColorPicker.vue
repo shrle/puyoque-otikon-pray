@@ -3,13 +3,13 @@
     <div class="picker-container">
       <menu class="header-buttons">
         <div class="left">
-          <button class="fieldcap-frame-cancel" @click="prev">
+          <button class="fieldcap-frame-cancel" @click="prev" disabled>
             <span class="material-symbols-outlined"> arrow_back </span>
           </button>
         </div>
         <div class="center"></div>
         <div class="right">
-          <button class="fieldcap-frame-ok" @click="ok">
+          <button class="fieldcap-frame-ok" @click="ok" disabled>
             <span class="material-symbols-outlined"> arrow_forward </span>
           </button>
         </div>
@@ -89,10 +89,29 @@ export default {
       return x;
     },
 
+    allButtonEnable() {
+      document
+        .querySelectorAll(".nextpuyo-color-picker button")
+        .forEach((button) => {
+          button.disabled = false;
+        });
+    },
+    allButtonDisabled() {
+      document
+        .querySelectorAll(".nextpuyo-color-picker button")
+        .forEach((button) => {
+          button.disabled = true;
+        });
+    },
+    active() {
+      setTimeout(this.allButtonEnable, 1000);
+    },
     prev() {
+      this.allButtonDisabled();
       this.$emit("prev-step");
     },
     ok: async function () {
+      this.allButtonDisabled();
       this.$emit("set-color-for-nextpuyos", this.colorForNextPuyos);
     },
     pickPuyo(index) {

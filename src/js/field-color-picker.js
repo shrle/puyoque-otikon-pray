@@ -5,6 +5,7 @@ import {
   //getPixiApp,
   getCaptureContainer,
   getCursorArea,
+  getPointToImageRGB,
 } from "./pixi-range-selector";
 
 const fieldWidth = 8;
@@ -20,10 +21,8 @@ const appInit = (pixiApp) => {
   app.stage.addChild(mapChipAreaContainer);
 };
 
-let colorMap = [];
-
 const getColorMap = () => {
-  return colorMap;
+  return extractColorFromMap();
 };
 
 const initMapChipArea = () => {
@@ -49,7 +48,6 @@ const drawArea = (graphics) => {
   }
 
   graphics.endFill();
-  colorMap = extractColorFromMap();
 };
 
 const showDrawArea = () => {
@@ -66,6 +64,15 @@ const setColorPickerPoint = (x, y) => {
   colorPickerPoint.y = y;
 };
 
+/**
+ * 指定のマスの色を抽出するポイントを取得する
+ * @param {Number} x マスの左上の座標
+ * @param {Number} y マスの左上の座標
+ * @param {Number} width マスの幅
+ * @param {Number} height マスの高さ
+ *
+ * @returns キャンバス全体からの指定マスの抽出位置の座標
+ */
 const calcPickPoint = (x, y, width, height) => {
   const sx = colorPickerPoint.x;
   const sy = colorPickerPoint.y;
@@ -76,24 +83,35 @@ const calcPickPoint = (x, y, width, height) => {
   return { x: cx + x, y: cy + y };
 };
 
+/**
+ * フィールド上の指定マスのエリアを取得する
+ * @param {Number} x マスの行番号
+ * @param {Number} y マスの列番号
+ * @param {Number} wChip 行のマス数
+ * @param {Number} hChip 列のマス数
+ *
+ * @returns マスのエリア
+ */
 const getMapChipArea = (x, y, wChip, hChip) => {
   const area = getCursorArea();
   const chipWidth = area.width / wChip;
   const chipHeight = area.height / hChip;
-  return {
-    x: chipWidth * x + area.x,
-    y: chipHeight * y + area.y,
-    width: chipWidth,
-    height: chipHeight,
-  };
+  return new PIXI.Rectangle(
+    chipWidth * x + area.x,
+    chipHeight * y + area.y,
+    chipWidth,
+    chipHeight
+  );
 };
 
+/*
 const getRGB = (x, y) => {
   // 抽出する矩形を定義
   const rect = getCursorArea();
 
   // ピクセルデータを抽出
-  const data = app.renderer.extract.pixels(captureContainer, rect);
+  //const data = app.renderer.extract.pixels(captureContainer, rect);
+  const data = captureRGBData;
 
   x = parseInt(x) - rect.x;
   y = parseInt(y) - rect.y;
@@ -104,6 +122,7 @@ const getRGB = (x, y) => {
 
   return { r, g, b };
 };
+*/
 
 const getCursorAreaImage = () => {
   // 抽出する矩形を定義
@@ -119,21 +138,28 @@ const pickColorCode = (mapX, mapY) => {
   const area = getMapChipArea(mapX, mapY, fieldWidth, fieldHeight);
   const p = calcPickPoint(area.x, area.y, area.width, area.height);
 
+  /*
+  console.log("pickColor");
+  const colorCode = getColorCode(p.x, p.y);
+  console.dir({ area, p, colorCode });
+  */
+
   return getColorCode(p.x, p.y);
 };
 
 const pickColor = (mapX, mapY) => {
   const area = getMapChipArea(mapX, mapY, fieldWidth, fieldHeight);
+
   const p = calcPickPoint(area.x, area.y, area.width, area.height);
 
-  return getRGB(p.x, p.y);
+  return getPointToImageRGB(p.x, p.y);
 };
 
 /**
  * SS上の盤面から各マスの特定座標の色を抽出し、マップに格納する
  * @returns RGBを格納したマップ
  */
-const extractColorFromMap = () => {
+const extractColorFromMap = async () => {
   let map = array2dInit(fieldWidth, fieldHeight, "000000");
   for (let y = 0; y < fieldHeight; y++) {
     for (let x = 0; x < fieldWidth; x++) {
@@ -150,7 +176,7 @@ const extractColorFromMap = () => {
  * SS上の盤面から各マスの特定座標の色を抽出し、マップに格納する
  * @returns {Number[][]}カラーコードを格納したマップ
  */
-const extractColorCodeFromMap = () => {
+const extractColorCodeFromMap = async () => {
   let map = array2dInit(fieldWidth, fieldHeight, "000000");
   for (let y = 0; y < fieldHeight; y++) {
     for (let x = 0; x < fieldWidth; x++) {
@@ -163,8 +189,12 @@ const extractColorCodeFromMap = () => {
   return map;
 };
 
+// ERROR: 抽出自体は出来ているが座標がずれている
 const getColorCode = (x, y) => {
-  const { r, g, b } = getRGB(x, y);
+  x = parseInt(x);
+  y = parseInt(y);
+
+  const { r, g, b } = getPointToImageRGB(x, y);
   return convert.rgb.hex(r, g, b);
 };
 

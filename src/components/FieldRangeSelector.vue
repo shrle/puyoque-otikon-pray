@@ -4,13 +4,13 @@
       <div class="fieldcap-frame-controlls">
         <menu class="fieldcap-frame-buttons">
           <div class="left">
-            <button class="fieldcap-frame-cancel" @click="prev">
+            <button class="fieldcap-frame-cancel" @click="prev" disabled>
               <span class="material-symbols-outlined"> close </span>
             </button>
           </div>
           <div class="center"></div>
           <div class="right">
-            <button class="fieldcap-frame-ok" @click="ok">
+            <button class="fieldcap-frame-ok" @click="ok" disabled>
               <span class="material-symbols-outlined"> arrow_forward </span>
             </button>
           </div>
@@ -91,10 +91,11 @@ import {
   setImage,
   setLeftTopCursorPoint,
   setRightBottomCursorPoint,
-  getCursorAreaImage,
+  //getCursorAreaImage,
 } from "@/js/pixi-range-selector";
 import * as FieldColorPicker from "@/js/field-color-picker";
 import array2dInit from "@/js/array2d-init";
+
 export default {
   name: "FieldRangeSelector",
   components: {},
@@ -160,9 +161,27 @@ export default {
 
     removeCanvas() {
       if (this.ssCanvas.parentNode) {
-        console.log("remove canvas");
         this.ssCanvas.parentNode.removeChild(this.ssCanvas);
       }
+    },
+    allButtonEnable() {
+      document
+        .querySelectorAll(".field-range-selector button")
+        .forEach((button) => {
+          button.disabled = false;
+        });
+    },
+    allButtonDisabled() {
+      document
+        .querySelectorAll(".field-range-selector button")
+        .forEach((button) => {
+          button.disabled = true;
+        });
+    },
+    active() {
+      document.documentElement.requestFullscreen({ navigationUI: "hide" });
+      this.showCanvas();
+      setTimeout(this.allButtonEnable, 1000);
     },
     showCanvas() {
       this.removeCanvas();
@@ -191,11 +210,11 @@ export default {
       );
     },
     setCanvasImage() {
-      setTimeout(() => {
-        setImage(this.canvasImage);
-        setLeftTopCursorPoint(this.leftTopX, this.leftTopY);
-        setRightBottomCursorPoint(this.rightBottomX, this.rightBottomY);
-      }, 500);
+      //setTimeout(() => {
+      setImage(this.canvasImage);
+      setLeftTopCursorPoint(this.leftTopX, this.leftTopY);
+      setRightBottomCursorPoint(this.rightBottomX, this.rightBottomY);
+      //}, 500);
 
       if (this.settingSkip) {
         setTimeout(() => {
@@ -213,12 +232,15 @@ export default {
     },
 
     prev() {
+      this.allButtonDisabled();
       FieldColorPicker.hideDrawArea();
       this.$emit("prev-step");
     },
     ok: async function () {
-      this.areaImage = await getCursorAreaImage();
-      const map = FieldColorPicker.extractColorCodeFromMap();
+      this.allButtonDisabled();
+      //this.areaImage = await getCursorAreaImage();
+      const map = await FieldColorPicker.extractColorCodeFromMap();
+
       this.saveCursorArea();
       this.saveColorPickerPoint();
       FieldColorPicker.hideDrawArea();

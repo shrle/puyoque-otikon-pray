@@ -5,8 +5,12 @@ import * as PixiDragger from "@/js/pixi-add-drag";
 let app;
 const captureContainer = new PIXI.Container();
 const cursorContainer = new PIXI.Container();
+let canvasWidth = 0;
+let canvasHeight = 0;
+const appInit = (_canvasWidth, _canvasHeight) => {
+  canvasWidth = _canvasWidth;
+  canvasHeight = _canvasHeight;
 
-const appInit = (canvasWidth, canvasHeight) => {
   app = new PIXI.Application({
     width: canvasWidth,
     height: canvasHeight,
@@ -18,8 +22,9 @@ const appInit = (canvasWidth, canvasHeight) => {
   //canvasContainer = document.querySelector(canvasContainerSelector);
   //canvasContainer.appendChild(app.view);
   app.stage.addChild(captureContainer);
-
   app.stage.addChild(cursorContainer);
+
+  imageRGBDataSaver();
 
   return app;
 };
@@ -34,11 +39,15 @@ const getCaptureContainer = () => {
 
 let frameSizeAdjusted = false;
 let spScale;
+
 const setImage = (image) => {
   const baseTexture = PIXI.Texture.from(image);
   const sp = new PIXI.Sprite(baseTexture);
 
   captureContainer.addChild(sp);
+
+  // 画像が読み込まれたのでRGBデータを保存するフラグを立てる
+  imageRGBDataSaveFlag = true;
 
   if (frameSizeAdjusted) {
     sp.scale.x = spScale;
@@ -54,6 +63,52 @@ const setImage = (image) => {
   sp.scale.y = spScale;
   //app.renderer.resize(sp.width, sp.height);
   frameSizeAdjusted = true;
+};
+
+/**
+ * @type {Number[]} [n*4 + 0] = red,[n*4 + 1] = green,[n*4 + 2] = blue,[n*4 + 3] = alpha
+ */
+let imageRGBData = null;
+
+/**
+ * @type {boolean} 読み込んだ画像のRGBデータを取得する場合にtrueにする
+ * trueになった時にimageRGBDataSaverメソッドでデータの取得が行われる
+ * 基本的にsetImageメソッドで画像が読み込まれた時にtrueとなる
+ */
+let imageRGBDataSaveFlag = false;
+
+/**
+ * 画像が読み込まれたときにRGBデータを保存する
+ */
+const imageRGBDataSaver = () => {
+  app.ticker.add(() => {
+    if (!imageRGBDataSaveFlag) return;
+    imageRGBData = app.renderer.extract.pixels(captureContainer);
+
+    imageRGBDataSaveFlag = false;
+  });
+};
+
+/**
+ * 読み込んだ画像からキャンバスの左上を始点とした指定座標のRGBデータを取得する
+ *
+ * @param {Number} x
+ * @param {Number} y
+ * @returns {object.<Number, Number, Number>} RGB
+ */
+const getPointToImageRGB = (x, y) => {
+  if (!imageRGBData) return undefined;
+
+  x = parseInt(x);
+  y = parseInt(y);
+  const width = Math.ceil(captureContainer.width);
+
+  const data = imageRGBData;
+  const r = data[(y * width + x) * 4];
+  const g = data[(y * width + x) * 4 + 1];
+  const b = data[(y * width + x) * 4 + 2];
+
+  return { r, g, b };
 };
 
 const pushIn = (image, canvas) => {
@@ -130,7 +185,6 @@ let leftTopDragListener = {
       leftTopDragCallbacks.move(sprite);
   },
   end: (sprite) => {
-    console.dir(leftTopDragCallbacks);
     if (typeof leftTopDragCallbacks.end === "function")
       leftTopDragCallbacks.end(sprite);
   },
@@ -164,8 +218,6 @@ let rightBottomDragListener = {
  * @param {DragCallback} callBacks.end ドラッグ終了時に呼び出される関数
  */
 const setLeftTopDragListener = (callbacks) => {
-  console.log("setLeftTopDragListener");
-  console.dir(callbacks);
   const c = callbacks;
   leftTopDragCallbacks = { start: c.start, move: c.move, end: c.end };
 };
@@ -230,4 +282,5 @@ export {
   setRightBottomCursorPoint,
   getCursorArea,
   getCursorAreaImage,
+  getPointToImageRGB,
 };
