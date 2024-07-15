@@ -63,6 +63,12 @@ const setImage = (image) => {
   sp.scale.y = spScale;
   //app.renderer.resize(sp.width, sp.height);
   frameSizeAdjusted = true;
+
+  console.log("captureContainer size");
+  console.dir({
+    width: captureContainer.width,
+    height: captureContainer.height,
+  });
 };
 
 /**
@@ -86,6 +92,8 @@ const imageRGBDataSaver = () => {
     imageRGBData = app.renderer.extract.pixels(captureContainer);
 
     imageRGBDataSaveFlag = false;
+
+    console.log(imageRGBData.length);
   });
 };
 
@@ -101,7 +109,7 @@ const getPointToImageRGB = (x, y) => {
 
   x = parseInt(x);
   y = parseInt(y);
-  const width = Math.ceil(captureContainer.width);
+  const width = Math.round(captureContainer.width);
 
   const data = imageRGBData;
   const r = data[(y * width + x) * 4];
