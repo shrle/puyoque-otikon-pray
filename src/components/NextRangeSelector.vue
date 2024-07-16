@@ -20,32 +20,78 @@
           <h3>ドラッグと入力でネクストぷよの範囲を指定してください</h3>
           <section class="input-line">
             <div>左上</div>
-            <div>
-              <label for="lefttop-x">x : </label
-              ><input type="number" name="lefttop-x" v-model="leftTopX" />px
+
+            <div class="input-number">
+              <label for="lefttop-x"> </label>
+              <button class="" @click="downLeftTopX" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_left
+                </span>
+              </button>
+              <input type="number" name="lefttop-x" v-model="leftTopX" />
+              <button class="" @click="upLeftTopX" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_right
+                </span>
+              </button>
             </div>
-            <div>
-              <label for="lefttop-y">y : </label
-              ><input type="number" name="lefttop-y" v-model="leftTopY" />px
+
+            <div class="input-number">
+              <label for="lefttop-y"> </label>
+              <button class="" @click="downLeftTopY" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_down
+                </span>
+              </button>
+              <input type="number" name="lefttop-y" v-model="leftTopY" />
+              <button class="" @click="upLeftTopY" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_up
+                </span>
+              </button>
             </div>
           </section>
+
           <section class="input-line">
             <div>右下</div>
-            <div>
-              <label for="rightbottom-x">x : </label
-              ><input
+
+            <div class="input-number">
+              <label for="rightbottom-x"> </label>
+              <button class="" @click="downRightBottomX" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_left
+                </span>
+              </button>
+              <input
                 type="number"
                 name="rightbottom-x"
                 v-model="rightBottomX"
-              />px
+              />
+              <button class="" @click="upRightBottomX" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_right
+                </span>
+              </button>
             </div>
-            <div>
-              <label for="rightbottom-y">y : </label
-              ><input
+
+            <div class="input-number">
+              <label for="rightbottom-y"> </label>
+              <button class="" @click="downRightBottomY" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_down
+                </span>
+              </button>
+
+              <input
                 type="number"
                 name="rightbottom-y"
                 v-model="rightBottomY"
-              />px
+              />
+              <button class="" @click="upRightBottomY" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_up
+                </span>
+              </button>
             </div>
           </section>
 
@@ -54,25 +100,48 @@
             <div>
               <span class="material-symbols-outlined"> colorize </span>
             </div>
-            <div>
-              <label for="rightbottom-x">x : </label
-              ><input
+
+            <div class="input-number">
+              <label for="rightbottom-x"> </label>
+              <button class="" @click="downColorPickerX" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_left
+                </span>
+              </button>
+              <input
                 type="number"
                 max="100"
                 min="0"
                 name="color-pick-x"
                 v-model="colorPickerX"
-              />%
+              />
+              <button class="" @click="upColorPickerX" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_right
+                </span>
+              </button>
             </div>
-            <div>
-              <label for="rightbottom-y">y : </label
-              ><input
+
+            <div class="input-number">
+              <label for="rightbottom-y"> </label>
+
+              <button class="" @click="downColorPickerY" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_down
+                </span>
+              </button>
+              <input
                 type="number"
                 max="100"
                 min="0"
                 name="color-pick-y"
                 v-model="colorPickerY"
-              />%
+              />
+              <button class="" @click="upColorPickerY" disabled>
+                <span class="material-symbols-outlined">
+                  keyboard_arrow_up
+                </span>
+              </button>
             </div>
           </section>
         </article>
@@ -296,6 +365,43 @@ export default {
       localStorage.setItem("next-colorPickerX", this.colorPickerX);
       localStorage.setItem("next-colorPickerY", this.colorPickerY);
     },
+
+    upLeftTopX() {
+      this.leftTopX++;
+    },
+    downLeftTopX() {
+      this.leftTopX--;
+    },
+    upLeftTopY() {
+      this.leftTopY++;
+    },
+    downLeftTopY() {
+      this.leftTopY--;
+    },
+    upRightBottomX() {
+      this.rightBottomX++;
+    },
+    downRightBottomX() {
+      this.rightBottomX--;
+    },
+    upRightBottomY() {
+      this.rightBottomY++;
+    },
+    downRightBottomY() {
+      this.rightBottomY--;
+    },
+    upColorPickerX() {
+      this.colorPickerX++;
+    },
+    downColorPickerX() {
+      this.colorPickerX--;
+    },
+    upColorPickerY() {
+      this.colorPickerY++;
+    },
+    downColorPickerY() {
+      this.colorPickerY--;
+    },
   },
 };
 </script>
@@ -327,10 +433,11 @@ img {
   font-size: 15px;
 }
 input[type="number"] {
-  width: 70px;
+  width: 50px;
   height: 40px;
   border: 0;
   border-bottom: #000000 2px solid;
+  text-align: center;
 }
 
 .next-range-selector button {
@@ -435,6 +542,12 @@ input[type="number"] {
   flex-direction: row;
   justify-content: left;
   align-items: center;
+}
+
+.input-line .input-number {
+  display: flex;
+  flex-direction: row;
+  row-gap: 10px;
 }
 
 .input-line > * {
