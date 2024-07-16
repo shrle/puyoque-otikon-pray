@@ -1,6 +1,5 @@
 import * as PIXI from "pixi.js";
 import * as PixiDragger from "@/js/pixi-add-drag";
-//const convert = require("color-convert");
 
 let app;
 const captureContainer = new PIXI.Container();
@@ -16,11 +15,8 @@ const appInit = (_canvasWidth, _canvasHeight) => {
     height: canvasHeight,
   });
   PixiDragger.init(app, app.screen);
-  //initCursor(leftTopCallBacks, rightBottomCallBacks);
   initCursor();
   initCursorArea();
-  //canvasContainer = document.querySelector(canvasContainerSelector);
-  //canvasContainer.appendChild(app.view);
   app.stage.addChild(captureContainer);
   app.stage.addChild(cursorContainer);
 
@@ -55,13 +51,10 @@ const setImage = (image) => {
     return;
   }
 
-  //let f = canvasContainer;
-  //let fSize = { width: f.clientWidth, height: f.clientHeight };
   spScale = pushIn(sp, app.screen);
 
   sp.scale.x = spScale;
   sp.scale.y = spScale;
-  //app.renderer.resize(sp.width, sp.height);
   frameSizeAdjusted = true;
 
   console.log("captureContainer size");

@@ -1,5 +1,6 @@
 <template>
   <div class="field">
+    <LoadIcon></LoadIcon>
     <!--
     <div class="mb-2">
       <input type="checkbox" v-model="areaSkip" id="area-skip" class="me-2" />
@@ -229,6 +230,8 @@
 <script>
 import array2dInit from "@/js/array2d-init";
 import convert from "color-convert";
+
+import LoadIcon from "@/components/LoadIcon.vue";
 import InputImage from "@/components/InputImage.vue";
 import FieldRangeSelector from "@/components/FieldRangeSelector.vue";
 import PuyoColorPicker from "../components/PuyoColorPicker.vue";
@@ -247,6 +250,7 @@ const puyoColor = PuyoqueStd.puyoColor;
 export default {
   name: "FieldView",
   components: {
+    LoadIcon,
     InputImage,
     FieldRangeSelector,
     PuyoColorPicker,

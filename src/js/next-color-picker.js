@@ -87,25 +87,6 @@ const getMapChipArea = (x, y, wChip, hChip) => {
   };
 };
 
-/*
-const getRGB = (x, y) => {
-  // 抽出する矩形を定義
-  const rect = getCursorArea();
-
-  // ピクセルデータを抽出
-  const data = app.renderer.extract.pixels(captureContainer, rect);
-
-  x = parseInt(x) - rect.x;
-  y = parseInt(y) - rect.y;
-  // 特定座標のRGB値を取得
-  const r = data[(y * rect.width + x) * 4];
-  const g = data[(y * rect.width + x) * 4 + 1];
-  const b = data[(y * rect.width + x) * 4 + 2];
-
-  return { r, g, b };
-};
-*/
-
 const getCursorAreaImage = () => {
   // 抽出する矩形を定義
   const rect = getCursorArea();
@@ -166,17 +147,6 @@ const getColorCode = (x, y) => {
   const { r, g, b } = getPointToImageRGB(x, y);
   return convert.rgb.hex(r, g, b);
 };
-
-//let mapColor = array2dInit(fieldWidth, fieldHeight, "000000");
-/*
-const setMapColor = (x, y, color) => {
-  mapColor[y][x] = color;
-};
-
-const getMapColor = (x, y) => {
-  return mapColor[y][x];
-};
-*/
 
 export {
   appInit,
