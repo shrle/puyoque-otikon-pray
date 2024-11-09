@@ -416,17 +416,13 @@ export default {
       showMaps: true,
       pageId: "",
       pageList: [
-        { id: "charmyDraco", name: "チャーミードラコ" },
-        { id: "moreSuspiciousKlug", name: "もっとあやしいクルーク" },
-        { id: "anndoRingo", name: "あんどうりんご" },
-        { id: "spaceEcolo", name: "スペース☆エコロ" },
-        { id: "whiteMarle", name: "しろいマール" },
-        { id: "midsummerAmanone", name: "なつぞらのアマノネ" },
-        { id: "attariPoobo", name: "あたり＆プーボ" },
-        {
-          id: "cureBloomCureEgrette",
-          name: "キュアブルーム＆キュアイーグレット",
-        },
+        { id: "normal", name: "通常のタネ" },
+        { id: "deleteThree", name: "3個消し" },
+        { id: "paintBlue", name: "青ぬりかえ" },
+        { id: "paintPurple", name: "紫ぬりかえ" },
+        { id: "paintYellow", name: "黄ぬりかえ" },
+        { id: "paintRed", name: "赤ぬりかえ" },
+        { id: "paintGreen", name: "緑ぬりかえ" },
         //{ id: "", name: "" },
       ],
     };
@@ -435,12 +431,8 @@ export default {
   watch: {},
   methods: {
     init: function (id) {
-      const setting = settings[id];
-      if (!setting) {
-        this.pageId = undefined;
-        this.onload = true;
-        return;
-      }
+      const setting = settings[id] ? settings[id] : settings.normal;
+
       this.pageId = id;
       this.analysis = (() => {
         if (setting.selectRouteBehavior === "paint") {

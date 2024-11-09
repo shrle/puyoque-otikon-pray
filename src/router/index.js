@@ -24,6 +24,47 @@ const routes = [
       desc: "ぷよクエの落ちコンしそうなルート探索するアプリです",
     },
   },
+
+  {
+    path: "/seeds/charmyDraco",
+    redirect: { name: "seeds", params: { id: "normal" } },
+  },
+
+  {
+    path: "/seeds/moreSuspiciousKlug",
+    redirect: { name: "seeds", params: { id: "normal" } },
+  },
+
+  {
+    path: "/seeds/anndoRingo",
+    redirect: { name: "seeds", params: { id: "deleteThree" } },
+  },
+
+  {
+    path: "/seeds/spaceEcolo",
+    redirect: { name: "seeds", params: { id: "deleteThree" } },
+  },
+
+  {
+    path: "/seeds/whiteMarle",
+    redirect: { name: "seeds", params: { id: "paintBlue" } },
+  },
+
+  {
+    path: "/seeds/midsummerAmanone",
+    redirect: { name: "seeds", params: { id: "paintPurple" } },
+  },
+
+  {
+    path: "/seeds/attariPoobo",
+    redirect: { name: "seeds", params: { id: "paintYellow" } },
+  },
+
+  {
+    path: "/seeds/cureBloomCureEgrette",
+    redirect: { name: "seeds", params: { id: "paintRed" } },
+  },
+
   {
     path: "/test",
     name: "test",
